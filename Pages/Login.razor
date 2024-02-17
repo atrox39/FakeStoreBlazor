@@ -1,0 +1,38 @@
+@using FakeStore.Validations
+@using FakeStore.Service
+@page "/login"
+@inject IAuthService auth
+<PageTitle>Login</PageTitle>
+
+<h4>Token: @Token</h4>
+<EditForm Model="model" OnValidSubmit="ValidForm">
+  <DataAnnotationsValidator />
+  <div class="mb-3">
+    <label for="Username" class="form-label">Username</label>
+    <InputText @bind-Value=model.Username class="form-control" />
+    <ValidationMessage For="() => model.Username" />
+  </div>
+  <div class="mb-3">
+    <label for="Password" class="form-label">Password</label>
+    <InputText type="password" @bind-Value=model.Password class="form-control" />
+    <ValidationMessage For="() => model.Password" />
+  </div>
+  <div class="mb-3">
+    <button class="btn btn-primary">Login</button>
+  </div>
+</EditForm>
+
+@code
+{
+  private class TokenResponse
+  {
+    public string Token { get; set; } = null!;
+  }
+  private string Token = "";
+  private LoginValidation model = new();
+
+  private async void ValidForm()
+  {
+    Token = (await auth.Login(model)) ?? "";
+  }
+}
